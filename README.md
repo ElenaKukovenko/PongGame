@@ -28,9 +28,6 @@ cl /nologo /W3 /O2 /Fe:PongGame.exe main.c win32_ui.c game_logic.c user32.lib gd
 PongGame.exe
 
 
-## Скриншоты
-screenigri.png
-
 
 ## Реализованные модули
 game_logic - физика, коллизии, ускорение мяча, счёт, победа
