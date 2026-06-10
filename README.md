@@ -36,10 +36,4 @@ win32_ui - окно, двойная буферизация, отрисовка G
 
 ## Полная структура проекта
 TennisPong/
-├── main.c     
-├── game_logic.h
-├── game_logic.c
-├── win32_ui.h
-├── win32_ui.c
-├── build.bat
-└── README.md
+├── main.c ── game_logic.h ── game_logic.c ── win32_ui.h ── win32_ui.c ── build.bat ── README.md
