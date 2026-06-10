@@ -5,12 +5,10 @@
 void InitGame(GameState* state) {
     state->leftPaddle.x = 30;
     state->leftPaddle.y = (float)SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-    state->leftPaddle.vy = 0;
     state->leftPaddle.score = 0;
 
     state->rightPaddle.x = SCREEN_WIDTH - 30 - PADDLE_WIDTH;
     state->rightPaddle.y = (float)SCREEN_HEIGHT / 2 - PADDLE_HEIGHT / 2;
-    state->rightPaddle.vy = 0;
     state->rightPaddle.score = 0;
 
     state->ball.x = (float)SCREEN_WIDTH / 2 - BALL_SIZE / 2;
