@@ -11,16 +11,9 @@
 static GameState gameState;
 static HWND mainHwnd;
 
-static HBITMAP hBall = NULL;
-static HBITMAP hPaddleLeft = NULL;
-static HBITMAP hPaddleRight = NULL;
-static HBITMAP hBackground = NULL;
 static HBRUSH hBlackBrush = NULL;
 static HBRUSH hWhiteBrush = NULL;
 
-HBITMAP LoadBMPFile(const char* filename) {
-    return (HBITMAP)LoadImage(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-}
 
 void Render(HDC hdc, int width, int height) {
     HDC hdcBuffer = CreateCompatibleDC(hdc);
@@ -29,13 +22,6 @@ void Render(HDC hdc, int width, int height) {
 
     RECT rect = { 0, 0, width, height };
     FillRect(hdcBuffer, &rect, hBlackBrush);
-
-    if (hBackground) {
-        HDC hdcBg = CreateCompatibleDC(hdcBuffer);
-        SelectObject(hdcBg, hBackground);
-        StretchBlt(hdcBuffer, 0, 0, width, height, hdcBg, 0, 0, 800, 600, SRCCOPY);
-        DeleteDC(hdcBg);
-    }
 
     HPEN pen = CreatePen(PS_DOT, 2, RGB(255, 255, 255));
     HPEN oldPen = SelectObject(hdcBuffer, pen);
@@ -49,52 +35,25 @@ void Render(HDC hdc, int width, int height) {
     Ellipse(hdcBuffer, width / 2 - 50, height / 2 - 50, width / 2 + 50, height / 2 + 50);
     DeleteObject(pen);
 
-    HDC hdcPaddle = CreateCompatibleDC(hdcBuffer);
-    if (hPaddleLeft) {
-        SelectObject(hdcPaddle, hPaddleLeft);
-        StretchBlt(hdcBuffer, (int)gameState.leftPaddle.x, (int)gameState.leftPaddle.y,
-            PADDLE_WIDTH, PADDLE_HEIGHT, hdcPaddle, 0, 0,
-            PADDLE_WIDTH, PADDLE_HEIGHT, SRCCOPY);
-    }
-    else {
-        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
-        SelectObject(hdcBuffer, brush);
-        Rectangle(hdcBuffer, (int)gameState.leftPaddle.x, (int)gameState.leftPaddle.y,
-            (int)gameState.leftPaddle.x + PADDLE_WIDTH,
-            (int)gameState.leftPaddle.y + PADDLE_HEIGHT);
-        DeleteObject(brush);
-    }
+    HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
+    SelectObject(hdcBuffer, brush);
+    Rectangle(hdcBuffer, (int)gameState.leftPaddle.x, (int)gameState.leftPaddle.y,
+        (int)gameState.leftPaddle.x + PADDLE_WIDTH,
+        (int)gameState.leftPaddle.y + PADDLE_HEIGHT);
+    DeleteObject(brush);    
 
-    if (hPaddleRight) {
-        SelectObject(hdcPaddle, hPaddleRight);
-        StretchBlt(hdcBuffer, (int)gameState.rightPaddle.x, (int)gameState.rightPaddle.y,
-            PADDLE_WIDTH, PADDLE_HEIGHT, hdcPaddle, 0, 0,
-            PADDLE_WIDTH, PADDLE_HEIGHT, SRCCOPY);
-    }
-    else {
-        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
-        SelectObject(hdcBuffer, brush);
-        Rectangle(hdcBuffer, (int)gameState.rightPaddle.x, (int)gameState.rightPaddle.y,
-            (int)gameState.rightPaddle.x + PADDLE_WIDTH,
-            (int)gameState.rightPaddle.y + PADDLE_HEIGHT);
-        DeleteObject(brush);
-    }
-    DeleteDC(hdcPaddle);
+    brush = CreateSolidBrush(RGB(255, 255, 255));
+    SelectObject(hdcBuffer, brush);
+    Rectangle(hdcBuffer, (int)gameState.rightPaddle.x, (int)gameState.rightPaddle.y,
+        (int)gameState.rightPaddle.x + PADDLE_WIDTH,
+        (int)gameState.rightPaddle.y + PADDLE_HEIGHT);
+    DeleteObject(brush);
 
-    HDC hdcBall = CreateCompatibleDC(hdcBuffer);
-    if (hBall) {
-        SelectObject(hdcBall, hBall);
-        TransparentBlt(hdcBuffer, (int)gameState.ball.x, (int)gameState.ball.y,
-            BALL_SIZE, BALL_SIZE, hdcBall, 0, 0, BALL_SIZE, BALL_SIZE, RGB(0, 0, 0));
-    }
-    else {
-        HBRUSH brush = CreateSolidBrush(RGB(255, 100, 100));
-        SelectObject(hdcBuffer, brush);
-        Ellipse(hdcBuffer, (int)gameState.ball.x, (int)gameState.ball.y,
-            (int)gameState.ball.x + BALL_SIZE, (int)gameState.ball.y + BALL_SIZE);
-        DeleteObject(brush);
-    }
-    DeleteDC(hdcBall);
+    brush = CreateSolidBrush(RGB(255, 100, 100));
+    SelectObject(hdcBuffer, brush);
+    Ellipse(hdcBuffer, (int)gameState.ball.x, (int)gameState.ball.y,
+        (int)gameState.ball.x + BALL_SIZE, (int)gameState.ball.y + BALL_SIZE);
+    DeleteObject(brush);
 
     char scoreText[100];
     sprintf_s(scoreText, sizeof(scoreText), "LEFT: %d          RIGHT: %d",
@@ -219,10 +178,6 @@ int RunGame(HINSTANCE hInstance, int nCmdShow) {
 
     mainHwnd = hwnd;
 
-    hBall = LoadBMPFile("assets/ball.bmp");
-    hPaddleLeft = LoadBMPFile("assets/paddle_left.bmp");
-    hPaddleRight = LoadBMPFile("assets/paddle_right.bmp");
-    hBackground = LoadBMPFile("assets/background.bmp");
     hBlackBrush = CreateSolidBrush(RGB(0, 0, 0));
     hWhiteBrush = CreateSolidBrush(RGB(255, 255, 255));
 
@@ -251,14 +206,10 @@ int RunGame(HINSTANCE hInstance, int nCmdShow) {
 
         InvalidateRect(hwnd, NULL, FALSE);
         UpdateWindow(hwnd);
-
+            
         Sleep(16);
     }
 
-    DeleteObject(hBall);
-    DeleteObject(hPaddleLeft);
-    DeleteObject(hPaddleRight);
-    DeleteObject(hBackground);
     DeleteObject(hBlackBrush);
     DeleteObject(hWhiteBrush);
 
